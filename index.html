@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <main class="main_container flex">
+        <header class="title_container">
+            <h1 class="main_title">BATTLESHIP</h1>
+        </header>
+        <section class="game_container flex">
+            <div class="left_board board grid">
+                <div class="rows_header flex">
+                    <div class="row">A</div>
+                    <div class="row">B</div>
+                    <div class="row">C</div>
+                    <div class="row">D</div>
+                    <div class="row">E</div>
+                    <div class="row">F</div>
+                    <div class="row">G</div>
+                    <div class="row">H</div>
+                    <div class="row">I</div>
+                    <div class="row">J</div>
+                </div>
+                <div class="colums_header flex">
+                    <div class="column">1</div>
+                    <div class="column">2</div>
+                    <div class="column">3</div>
+                    <div class="column">4</div>
+                    <div class="column">5</div>
+                    <div class="column">6</div>
+                    <div class="column">7</div>
+                    <div class="column">8</div>
+                    <div class="column">9</div>
+                    <div class="column">10</div>
+                </div>
+                <section id="user_board" class="user_board board_container grid">
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                </section>
+            </div>
+            <div class="right_side board grid">
+                <div class="rows_header flex">
+                    <div class="row">A</div>
+                    <div class="row">B</div>
+                    <div class="row">C</div>
+                    <div class="row">D</div>
+                    <div class="row">E</div>
+                    <div class="row">F</div>
+                    <div class="row">G</div>
+                    <div class="row">H</div>
+                    <div class="row">I</div>
+                    <div class="row">J</div>
+                </div>
+                <div class="colums_header flex">
+                    <div class="column">1</div>
+                    <div class="column">2</div>
+                    <div class="column">3</div>
+                    <div class="column">4</div>
+                    <div class="column">5</div>
+                    <div class="column">6</div>
+                    <div class="column">7</div>
+                    <div class="column">8</div>
+                    <div class="column">9</div>
+                    <div class="column">10</div>
+                </div>
+                <section id="oponent_board" class="oponent_board board_container grid">
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                    <div id="card_" class="game_cell"></div>
+                </section>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">Website Under Construction</footer>
+</body>
+</html>
