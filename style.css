@@ -91,7 +91,6 @@ body {
 .board_container {
     grid-area: 2 / 2 / 3 / 3;
     grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 
