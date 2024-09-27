@@ -1,22 +1,42 @@
+
+const userBoard = [];
+const oponentBoard = [];
+
 function createPlayerBoard(playerBoard) {
-    const grid = 10; 
+    const grid = 10; // Grid Size: 10x10
     const gameboard = document.querySelector(`#${playerBoard}`);
 
-    for (let i = 0; i < grid; i++) {
-        const column = document.createElement('div');
+    for (let i = 1; i <= grid; i++) {
+        const column = [];
+        const columnElem = document.createElement('div');
 
         for (let j = 0; j < grid; j++) {
-            const row = document.createElement('div');
-            row.setAttribute('board', playerBoard)
-            row.setAttribute('column', i)
-            row.setAttribute('row', j)
-            row.classList.add('game_cell');
-            column.appendChild(row);
+            const row = {
+                row: i,
+                column: String.fromCharCode(97 + j),
+                value: null,
+            };
+
+            const rowElem = document.createElement('div');
+            rowElem.setAttribute('board', playerBoard)
+            rowElem.setAttribute('row', i)
+            rowElem.setAttribute('column', String.fromCharCode(97 + j))
+            rowElem.classList.add('game_cell');
+
+            column.push(row);
+            columnElem.appendChild(rowElem);
         }
 
-        gameboard.appendChild(column);
+        if (playerBoard == "user_board") {
+            userBoard.push(column);
+            gameboard.appendChild(columnElem);
+        } else {
+            oponentBoard.push(column);
+            gameboard.appendChild(columnElem);
+        }
     }
 }
+
 
 createPlayerBoard('user_board');
 createPlayerBoard('oponent_board');
@@ -51,8 +71,24 @@ class Gameboard {
         this.gameOver = false;
     }
 
-    placeNewShip(length) {
+    placeShip(row, column, length) {
+        const newColumnValue = column.charCodeAt(0) - 97;
         const newShip = new Ship(length);
+
+        if (!userBoard[row - 1][newColumnValue].value) {
+            for (let i = 0; i < length; i++ ) {
+                userBoard[row - 1][newColumnValue + i].value = newShip;
+            }
+        }
     }
 
+    
+
 }
+
+const gameboard = new Gameboard();
+
+gameboard.placeShip(3, "f", 3)
+
+console.table(userBoard)
+// console.table(oponentBoard)
