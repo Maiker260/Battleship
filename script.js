@@ -73,13 +73,26 @@ class Gameboard {
 
     placeShip(row, column, length) {
         const newColumnValue = column.charCodeAt(0) - 97;
-        const newShip = new Ship(length);
+        const newShip = new Ship(length);        
 
         if (!userBoard[row - 1][newColumnValue].value) {
             for (let i = 0; i < length; i++ ) {
                 userBoard[row - 1][newColumnValue + i].value = newShip;
             }
         }
+    }
+
+    receiveAttack(row, column) {
+        const newColumnValue = column.charCodeAt(0) - 97;
+        const coordinates = userBoard[row - 1][newColumnValue].value;
+        
+        if (coordinates && coordinates.damage < coordinates.length) {
+            for (let i = 0; i < coordinates.length; i++ ) {
+                //  Execute Ship Hit Function
+            }
+        }
+
+
     }
 
     
@@ -89,6 +102,7 @@ class Gameboard {
 const gameboard = new Gameboard();
 
 gameboard.placeShip(3, "f", 3)
+gameboard.receiveAttack(3, "f");
 
 console.table(userBoard)
 // console.table(oponentBoard)
