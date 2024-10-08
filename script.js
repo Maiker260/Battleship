@@ -48,48 +48,79 @@ class Ship {
     constructor(length) {
         this.length = length;
         this.damage = 0;
-        this.sink = false;
     }
 
     hit() {
-        if (this.damage < this.length - 1) {
-            this.damage += 1;
-        }
+       this.damage += 1;
     }
 
     isSunk() {
-        if (this.damage === this.length - 1) {
-            this.sink = true;
-        }
+        return this.damage >= this.length;
     }
 }
 
 class Gameboard {
     constructor() {
-        this.userSunkenShips = 0;
-        this.oponentSunkenShips = 0;
-        this.gameOver = false;
+        this.ships = [];
+        this.shots = [];
+        this.missedAttacks = [];
     }
 
-    placeShip(row, column, length) {
-        const newColumnValue = column.charCodeAt(0) - 97;
-        const newShip = new Ship(length);        
+    placeShip(row, column, length, rotation) {
+        const columnIndex = column.charCodeAt(0) - 97;
+        const ship = new Ship(length);     
 
-        if (!userBoard[row - 1][newColumnValue].value) {
-            for (let i = 0; i < length; i++ ) {
-                userBoard[row - 1][newColumnValue + i].value = newShip;
+        // Place the Ship depending on the rotation
+        if (rotation == "Horizontal") {
+            for (let i = 0; i < length; i++) {
+                if (userBoard[row - 1][columnIndex + i].value) {
+                    console.log('Space already occupied');
+                    return false;
+                } else {
+                    userBoard[row - 1][columnIndex + i].value = ship;
+                }
+            }
+        } else {
+            for (let i = 0; i < length; i++) {
+                if (userBoard[(row - 1) + i][columnIndex].value) {
+                    console.log('Space already occupied');
+                    return false;
+                } else {
+                    userBoard[(row - 1) + i][columnIndex].value = ship;
+                }
             }
         }
+
+        this.ships.push(ship);
+        return true
     }
 
     receiveAttack(row, column) {
-        const newColumnValue = column.charCodeAt(0) - 97;
-        const coordinates = userBoard[row - 1][newColumnValue].value;
+        const columnIndex = column.charCodeAt(0) - 97;
+        const targetCell = userBoard[row - 1][columnIndex];
+        const ship = targetCell.value;
         
-        if (coordinates && coordinates.damage < coordinates.length) {
-            for (let i = 0; i < coordinates.length; i++ ) {
-                //  Execute Ship Hit Function
+        if (ship) {
+
+            // Avoid hitting the same cell more than once
+            const alreadyHit = this.shots.some(shot => shot.row === row && shot.column === column);
+        
+            if (alreadyHit) {
+                console.log("Already Hit");
+                return false;
             }
+
+            ship.hit();
+            this.shots.push({ row, column });
+            console.log('Hit!');
+
+            if (ship.isSunk()) {
+                console.log("Ship Sunk!");
+            }
+
+        } else {
+            this.missedAttacks.push({ row, column });
+            console.log("Miss!");
         }
 
 
@@ -99,10 +130,15 @@ class Gameboard {
 
 }
 
-const gameboard = new Gameboard();
+const userGameboard = new Gameboard();
 
-gameboard.placeShip(3, "f", 3)
-gameboard.receiveAttack(3, "f");
+userGameboard.placeShip(3, "f", 3, "Horizontal")
 
 console.table(userBoard)
+userGameboard.receiveAttack(3, "f");
+userGameboard.receiveAttack(3, "f");
+userGameboard.receiveAttack(3, "f");
+
+
+
 // console.table(oponentBoard)
