@@ -1,6 +1,6 @@
 
-const userBoard = [];
-const oponentBoard = [];
+const humanBoard = [];
+const computerBoard = [];
 
 function createPlayerBoard(playerBoard) {
     const grid = 10; // Grid Size: 10x10
@@ -28,10 +28,10 @@ function createPlayerBoard(playerBoard) {
         }
 
         if (playerBoard == "user_board") {
-            userBoard.push(column);
+            humanBoard.push(column);
             gameboard.appendChild(columnElem);
         } else {
-            oponentBoard.push(column);
+            computerBoard.push(column);
             gameboard.appendChild(columnElem);
         }
     }
@@ -59,13 +59,23 @@ class Ship {
     }
 }
 
+function assignBoard(owner) {
+    if (owner == "human") {
+        return humanBoard;
+    }
+    
+    return computerBoard;
+}
+
 class Gameboard {
-    constructor() {
+    constructor(owner) {
+        this.owner = owner;
         this.ships = [];
         this.shots = [];
         this.missedAttacks = [];
+        this.board = assignBoard(owner);
     }
-
+    
     placeShip(row, column, length, rotation) {
         const columnIndex = column.charCodeAt(0) - 97;
         const ship = new Ship(length);     
@@ -73,20 +83,24 @@ class Gameboard {
         // Place the Ship depending on the rotation
         if (rotation == "Horizontal") {
             for (let i = 0; i < length; i++) {
-                if (userBoard[row - 1][columnIndex + i].value) {
-                    console.log('Space already occupied');
+                // if (userBoard[row - 1][columnIndex + i].value) {
+                if (this.board[row - 1][columnIndex + i].value) {
+                    console.log('Horizontal Space already occupied');
                     return false;
                 } else {
-                    userBoard[row - 1][columnIndex + i].value = ship;
+                    // userBoard[row - 1][columnIndex + i].value = ship;
+                    this.board[row - 1][columnIndex + i].value = ship;
                 }
             }
         } else {
             for (let i = 0; i < length; i++) {
-                if (userBoard[(row - 1) + i][columnIndex].value) {
-                    console.log('Space already occupied');
+                // if (userBoard[(row - 1) + i][columnIndex].value) {
+                if (this.board[(row - 1) + i][columnIndex].value) {
+                    console.log('Vertical Space already occupied');
                     return false;
                 } else {
-                    userBoard[(row - 1) + i][columnIndex].value = ship;
+                    // userBoard[(row - 1) + i][columnIndex].value = ship;
+                    this.board[(row - 1) + i][columnIndex].value = ship;
                 }
             }
         }
@@ -97,11 +111,11 @@ class Gameboard {
 
     receiveAttack(row, column) {
         const columnIndex = column.charCodeAt(0) - 97;
-        const targetCell = userBoard[row - 1][columnIndex];
+        // const targetCell = userBoard[row - 1][columnIndex];
+        const targetCell = this.board[row - 1][columnIndex];
         const ship = targetCell.value;
         
         if (ship) {
-
             // Avoid hitting the same cell more than once
             const alreadyHit = this.shots.some(shot => shot.row === row && shot.column === column);
         
@@ -118,27 +132,62 @@ class Gameboard {
                 console.log("Ship Sunk!");
             }
 
+            // Check if the game is over.
+            this.gameOver();
         } else {
             this.missedAttacks.push({ row, column });
             console.log("Miss!");
         }
-
-
     }
 
-    
+    // Check if all ships are sunk
+    allShipsSunk() {
+        return this.ships.every(ship => ship.isSunk());
+    }
 
+    gameOver() {
+        if (this.allShipsSunk()) {
+            console.log("Game Over")
+            if (this.owner == "human") {
+                console.log("Computer Wins!!");
+            } else {
+                console.log("Human Wins!!");
+            }
+        }
+    }
 }
 
-const userGameboard = new Gameboard();
+class Player {
+    constructor(owner) {
+        this.owner = owner;
+        this.gameboard = new Gameboard(owner);
+    }
 
-userGameboard.placeShip(3, "f", 3, "Horizontal")
+    placeShips(row, column, length, rotation) {
+        this.gameboard.placeShip(row, column, length, rotation)
+    }
 
-console.table(userBoard)
-userGameboard.receiveAttack(3, "f");
-userGameboard.receiveAttack(3, "f");
-userGameboard.receiveAttack(3, "f");
+    attack(oponent, row, column) {
+        oponent.gameboard.receiveAttack(row, column)
+    }
+}
+
+const humanGame = new Player("human");
+const computerGame = new Player("computer");
 
 
+computerGame.placeShips(3, "f", 3, "Horizontal")
 
-// console.table(oponentBoard)
+humanGame.attack(computerGame, 3, "f");
+humanGame.attack(computerGame, 3, "g");
+humanGame.attack(computerGame, 3, "h");
+
+console.table(humanBoard)
+console.table(computerBoard)
+
+
+humanGame.placeShips(3, "a", 3, "Horizontal")
+
+computerGame.attack(humanGame, 3, "f");
+computerGame.attack(humanGame, 3, "g");
+computerGame.attack(humanGame, 3, "h");
