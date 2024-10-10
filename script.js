@@ -6,33 +6,35 @@ function createPlayerBoard(playerBoard) {
     const grid = 10; // Grid Size: 10x10
     const gameboard = document.querySelector(`#${playerBoard}`);
 
-    for (let i = 1; i <= grid; i++) {
-        const column = [];
-        const columnElem = document.createElement('div');
+    for (let i = 0; i < grid; i++) {
+        const row = [];
+        const rowElem = document.createElement('div');
 
         for (let j = 0; j < grid; j++) {
-            const row = {
-                row: i,
+            const column = {
+                row: i + 1,
                 column: String.fromCharCode(97 + j),
                 value: null,
             };
 
-            const rowElem = document.createElement('div');
-            rowElem.setAttribute('board', playerBoard)
-            rowElem.setAttribute('row', i)
-            rowElem.setAttribute('column', String.fromCharCode(97 + j))
-            rowElem.classList.add('game_cell');
+            const columnElem = document.createElement('div');
+            columnElem.dataset.board = playerBoard;
+                // In this case the rows will be named "j" and columns "i". ONLY THE NAME
+            columnElem.dataset.row = j + 1;
+            columnElem.dataset.column = String.fromCharCode(97 + i);
+            
+            columnElem.classList.add('game_cell');
 
-            column.push(row);
-            columnElem.appendChild(rowElem);
+            row.push(column);
+            rowElem.appendChild(columnElem);
         }
 
-        if (playerBoard == "user_board") {
-            humanBoard.push(column);
-            gameboard.appendChild(columnElem);
+        if (playerBoard === "user_board") {
+            humanBoard.push(row);
+            gameboard.appendChild(rowElem);
         } else {
-            computerBoard.push(column);
-            gameboard.appendChild(columnElem);
+            computerBoard.push(row);
+            gameboard.appendChild(rowElem);
         }
     }
 }
@@ -60,7 +62,7 @@ class Ship {
 }
 
 function assignBoard(owner) {
-    if (owner == "human") {
+    if (owner === "human") {
         return humanBoard;
     }
     
@@ -81,25 +83,21 @@ class Gameboard {
         const ship = new Ship(length);     
 
         // Place the Ship depending on the rotation
-        if (rotation == "Horizontal") {
+        if (rotation === "Horizontal") {
             for (let i = 0; i < length; i++) {
-                // if (userBoard[row - 1][columnIndex + i].value) {
                 if (this.board[row - 1][columnIndex + i].value) {
                     console.log('Horizontal Space already occupied');
                     return false;
                 } else {
-                    // userBoard[row - 1][columnIndex + i].value = ship;
-                    this.board[row - 1][columnIndex + i].value = ship;
+                    this.board[row -1][columnIndex + i].value = ship; 
                 }
             }
         } else {
             for (let i = 0; i < length; i++) {
-                // if (userBoard[(row - 1) + i][columnIndex].value) {
                 if (this.board[(row - 1) + i][columnIndex].value) {
                     console.log('Vertical Space already occupied');
                     return false;
                 } else {
-                    // userBoard[(row - 1) + i][columnIndex].value = ship;
                     this.board[(row - 1) + i][columnIndex].value = ship;
                 }
             }
@@ -148,7 +146,7 @@ class Gameboard {
     gameOver() {
         if (this.allShipsSunk()) {
             console.log("Game Over")
-            if (this.owner == "human") {
+            if (this.owner === "human") {
                 console.log("Computer Wins!!");
             } else {
                 console.log("Human Wins!!");
@@ -172,22 +170,34 @@ class Player {
     }
 }
 
+const userBoard = document.querySelector('#user_board');
+
+userBoard.addEventListener('click', (el) => {
+    const cell = el.target
+    if (cell.dataset.board == 'user_board') {
+        console.log('row: ' + cell.dataset.row);
+        console.log('column: ' + cell.dataset.column);
+    }
+});
+
+
 const humanGame = new Player("human");
 const computerGame = new Player("computer");
 
 
-computerGame.placeShips(3, "f", 3, "Horizontal")
+// computerGame.placeShips(3, "f", 3, "Horizontal")
+// console.log(computerBoard)
 
-humanGame.attack(computerGame, 3, "f");
-humanGame.attack(computerGame, 3, "g");
-humanGame.attack(computerGame, 3, "h");
+// humanGame.attack(computerGame, 3, "f");
+// humanGame.attack(computerGame, 3, "g");
+// humanGame.attack(computerGame, 3, "h");
 
-console.table(humanBoard)
-console.table(computerBoard)
+// console.table(humanBoard)
+// console.table(computerBoard)
 
 
-humanGame.placeShips(3, "a", 3, "Horizontal")
+// humanGame.placeShips(3, "a", 3, "Horizontal")
 
-computerGame.attack(humanGame, 3, "f");
-computerGame.attack(humanGame, 3, "g");
-computerGame.attack(humanGame, 3, "h");
+// computerGame.attack(humanGame, 3, "f");
+// computerGame.attack(humanGame, 3, "g");
+// computerGame.attack(humanGame, 3, "h");
