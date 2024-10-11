@@ -102,11 +102,31 @@ body {
     aspect-ratio: 1;
     border: 1px solid #FFFFFF7d;
     background-color: rgba(0, 0, 0, .486);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .game_cell:hover {
-    background-color: aquamarine;
+    background-color: #FFFFFF7d;
 }
+
+.marker_hit {
+    z-index: -1;
+    width: 50%;
+    height: 50%;
+    background-color: red;
+    border-radius: 50%;
+}
+
+.marker_miss {
+    z-index: -1;
+    width: 50%;
+    height: 50%;
+    background-color: rgb(26, 212, 26);
+    border-radius: 50%;
+}
+
 
 .footer {
     position: absolute;

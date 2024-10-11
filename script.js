@@ -77,6 +77,19 @@ class Gameboard {
         this.missedAttacks = [];
         this.board = assignBoard(owner);
     }
+
+    MissShot(row, column) {
+        return this.missedAttacks.some(shot => shot.row === row && shot.column === column);
+    }
+
+    alreadyHit(row, column) {
+        const alreadyHit = this.shots.some(shot => shot.row === row && shot.column === column);
+        const AlreadyMiss = this.MissShot(row, column);
+        
+        if (alreadyHit || AlreadyMiss) {
+            return true
+        }
+    }
     
     placeShip(row, column, length, rotation) {
         const columnIndex = column.charCodeAt(0) - 97;
@@ -109,17 +122,14 @@ class Gameboard {
 
     receiveAttack(row, column) {
         const columnIndex = column.charCodeAt(0) - 97;
-        // const targetCell = userBoard[row - 1][columnIndex];
         const targetCell = this.board[row - 1][columnIndex];
         const ship = targetCell.value;
         
         if (ship) {
             // Avoid hitting the same cell more than once
-            const alreadyHit = this.shots.some(shot => shot.row === row && shot.column === column);
-        
-            if (alreadyHit) {
-                console.log("Already Hit");
-                return false;
+            if (this.alreadyHit(row, column)) {
+                console.log("Already Hit!");
+                return;
             }
 
             ship.hit();
@@ -132,6 +142,7 @@ class Gameboard {
 
             // Check if the game is over.
             this.gameOver();
+            return true
         } else {
             this.missedAttacks.push({ row, column });
             console.log("Miss!");
@@ -158,6 +169,7 @@ class Gameboard {
 class Player {
     constructor(owner) {
         this.owner = owner;
+        this.turn = false;
         this.gameboard = new Gameboard(owner);
     }
 
@@ -165,27 +177,52 @@ class Player {
         this.gameboard.placeShip(row, column, length, rotation)
     }
 
+    alreadyHits(row, column) {
+        return this.gameboard.alreadyHit(row, column);
+    }
+
+    MissShot(row, column) {
+        return this.gameboard.MissShot(row, column);
+    }
+
     attack(oponent, row, column) {
         oponent.gameboard.receiveAttack(row, column)
     }
 }
 
-const userBoard = document.querySelector('#user_board');
+const userBoard = document.querySelector('#oponent_board');
 
-userBoard.addEventListener('click', (el) => {
-    const cell = el.target
-    if (cell.dataset.board == 'user_board') {
-        console.log('row: ' + cell.dataset.row);
-        console.log('column: ' + cell.dataset.column);
+userBoard.addEventListener('click', (e) => {
+    const cellContainer = e.target;
+    const cell = e.target.dataset;
+
+    if (cell.board === 'oponent_board') {
+
+        if (computerGame.alreadyHits(cell.row, cell.column)) {
+            alert('Already Hit!');
+            return
+        }
+
+        humanGame.attack(computerGame, cell.row, cell.column)
+
+        const marker = document.createElement('div');
+
+        if (computerGame.MissShot(cell.row, cell.column)) {
+            marker.classList.add('marker_miss');
+        }
+
+        marker.classList.add('marker_hit');
+        
+        cellContainer.appendChild(marker);
     }
-});
+})
 
 
 const humanGame = new Player("human");
 const computerGame = new Player("computer");
 
 
-// computerGame.placeShips(3, "f", 3, "Horizontal")
+computerGame.placeShips(3, "f", 3, "Horizontal")
 // console.log(computerBoard)
 
 // humanGame.attack(computerGame, 3, "f");
