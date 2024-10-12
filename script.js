@@ -1,6 +1,6 @@
 
-const humanBoard = [];
-const computerBoard = [];
+const player1Board = [];
+const player2Board = [];
 
 function createPlayerBoard(playerBoard) {
     const grid = 10; // Grid Size: 10x10
@@ -29,23 +29,24 @@ function createPlayerBoard(playerBoard) {
             rowElem.appendChild(columnElem);
         }
 
-        if (playerBoard === "user_board") {
-            humanBoard.push(row);
+        if (playerBoard === "player1Board") {
+            player1Board.push(row);
             gameboard.appendChild(rowElem);
         } else {
-            computerBoard.push(row);
+            player2Board.push(row);
             gameboard.appendChild(rowElem);
         }
     }
 }
 
 
-createPlayerBoard('user_board');
-createPlayerBoard('oponent_board');
+createPlayerBoard('player1Board');
+createPlayerBoard('player2Board');
 
 // Need to split the code into modules
 //////////////////////////////////////////
 
+// ----------------
 class Ship {
     constructor(length) {
         this.length = length;
@@ -61,12 +62,13 @@ class Ship {
     }
 }
 
+// ---------------------
 function assignBoard(owner) {
-    if (owner === "human") {
-        return humanBoard;
+    if (owner === "player1") {
+        return player1Board;
     }
     
-    return computerBoard;
+    return player2Board;
 }
 
 class Gameboard {
@@ -156,16 +158,17 @@ class Gameboard {
 
     gameOver() {
         if (this.allShipsSunk()) {
-            console.log("Game Over")
-            if (this.owner === "human") {
-                console.log("Computer Wins!!");
+            alert("Game Over!")
+            if (this.owner === "player1") {
+                alert("Player2 Wins!!");
             } else {
-                console.log("Human Wins!!");
+                alert("Player1 Wins!!");
             }
         }
     }
 }
 
+// ---------------------------
 class Player {
     constructor(owner) {
         this.owner = owner;
@@ -190,51 +193,56 @@ class Player {
     }
 }
 
-const userBoard = document.querySelector('#oponent_board');
+// ----------------
+const boards = {
+    user: document.querySelector('#player1Board'),
+    oponent: document.querySelector('#player2Board'),
+}
 
-userBoard.addEventListener('click', (e) => {
-    const cellContainer = e.target;
-    const cell = e.target.dataset;
+Object.values(boards).forEach(board => {
+    board.addEventListener('click', (e) => {
 
-    if (cell.board === 'oponent_board') {
+        const cellContainer = e.target;
+        const cell = e.target.dataset;
 
-        if (computerGame.alreadyHits(cell.row, cell.column)) {
-            alert('Already Hit!');
-            return
+        let currentPlayer = player1Game;
+        let oponent = player2Game;
+
+        if (cell.board === 'player1Board' || cell.board === 'player2Board') {
+
+            if (cell.board === 'player1Board') {
+                currentPlayer = player2Game;
+                oponent = player1Game;
+            }
+
+            if (oponent.alreadyHits(cell.row, cell.column)) {
+                alert('Already Hit!');
+                return
+            }
+
+            currentPlayer.attack(oponent, cell.row, cell.column)
+
+            const marker = document.createElement('div');
+
+            if (oponent.MissShot(cell.row, cell.column)) {
+                marker.classList.add('marker_miss');
+            }
+
+            marker.classList.add('marker_hit');
+            
+            cellContainer.appendChild(marker);
         }
-
-        humanGame.attack(computerGame, cell.row, cell.column)
-
-        const marker = document.createElement('div');
-
-        if (computerGame.MissShot(cell.row, cell.column)) {
-            marker.classList.add('marker_miss');
-        }
-
-        marker.classList.add('marker_hit');
-        
-        cellContainer.appendChild(marker);
-    }
+    })
 })
 
 
-const humanGame = new Player("human");
-const computerGame = new Player("computer");
+
+const player1Game = new Player("player1");
+const player2Game = new Player("player2");
 
 
-computerGame.placeShips(3, "f", 3, "Horizontal")
-// console.log(computerBoard)
+player2Game.placeShips(3, "f", 3, "Horizontal")
+player1Game.placeShips(3, "a", 3, "Horizontal")
 
-// humanGame.attack(computerGame, 3, "f");
-// humanGame.attack(computerGame, 3, "g");
-// humanGame.attack(computerGame, 3, "h");
-
-// console.table(humanBoard)
-// console.table(computerBoard)
-
-
-// humanGame.placeShips(3, "a", 3, "Horizontal")
-
-// computerGame.attack(humanGame, 3, "f");
-// computerGame.attack(humanGame, 3, "g");
-// computerGame.attack(humanGame, 3, "h");
+player2Game.placeShips(1, "a", 3, "Vertical")
+player1Game.placeShips(1, "j", 3, "Vertical")
