@@ -19,7 +19,7 @@ function createPlayerBoard(playerBoard) {
 
             const columnElem = document.createElement('div');
             columnElem.dataset.board = playerBoard;
-                // In this case the rows will be named "j" and columns "i". ONLY THE NAME
+                // In this case the rows will be named 'j' and columns 'i'. ONLY THE NAME
             columnElem.dataset.row = j + 1;
             columnElem.dataset.column = String.fromCharCode(97 + i);
             
@@ -29,7 +29,7 @@ function createPlayerBoard(playerBoard) {
             rowElem.appendChild(columnElem);
         }
 
-        if (playerBoard === "player1Board") {
+        if (playerBoard === 'player1Board') {
             player1Board.push(row);
             gameboard.appendChild(rowElem);
         } else {
@@ -64,7 +64,7 @@ class Ship {
 
 // ---------------------
 function assignBoard(owner) {
-    if (owner === "player1") {
+    if (owner === 'player1') {
         return player1Board;
     }
     
@@ -98,7 +98,7 @@ class Gameboard {
         const ship = new Ship(length);     
 
         // Place the Ship depending on the rotation
-        if (rotation === "Horizontal") {
+        if (rotation === 'Horizontal') {
             for (let i = 0; i < length; i++) {
                 if (this.board[row - 1][columnIndex + i].value) {
                     console.log('Horizontal Space already occupied');
@@ -128,18 +128,11 @@ class Gameboard {
         const ship = targetCell.value;
         
         if (ship) {
-            // Avoid hitting the same cell more than once
-            if (this.alreadyHit(row, column)) {
-                console.log("Already Hit!");
-                return;
-            }
-
             ship.hit();
             this.shots.push({ row, column });
-            console.log('Hit!');
 
             if (ship.isSunk()) {
-                console.log("Ship Sunk!");
+                console.log('Ship Sunk!');
             }
 
             // Check if the game is over.
@@ -147,7 +140,6 @@ class Gameboard {
             return true
         } else {
             this.missedAttacks.push({ row, column });
-            console.log("Miss!");
         }
     }
 
@@ -158,11 +150,11 @@ class Gameboard {
 
     gameOver() {
         if (this.allShipsSunk()) {
-            alert("Game Over!")
-            if (this.owner === "player1") {
-                alert("Player2 Wins!!");
+            alert('Game Over!')
+            if (this.owner === 'player1') {
+                alert('Player2 Wins!!');
             } else {
-                alert("Player1 Wins!!");
+                alert('Player1 Wins!!');
             }
         }
     }
@@ -177,7 +169,7 @@ class Player {
     }
 
     placeShips(row, column, length, rotation) {
-        this.gameboard.placeShip(row, column, length, rotation)
+        this.gameboard.placeShip(row, column, length, rotation);
     }
 
     alreadyHits(row, column) {
@@ -188,61 +180,86 @@ class Player {
         return this.gameboard.MissShot(row, column);
     }
 
-    attack(oponent, row, column) {
-        oponent.gameboard.receiveAttack(row, column)
+    attack(opponent, row, column) {
+        opponent.gameboard.receiveAttack(row, column);
+    }
+
+    changeTurn() {
+        this.turn 
+            ? this.turn = false 
+            : this.turn = true
     }
 }
 
 // ----------------
 const boards = {
-    user: document.querySelector('#player1Board'),
-    oponent: document.querySelector('#player2Board'),
+    player1: document.querySelector('#player1Board'),
+    player2: document.querySelector('#player2Board'),
 }
 
-Object.values(boards).forEach(board => {
+function playGame() {
+    let board;
+
+    if (player2Game.turn) {
+        board = boards.player1;
+        player2Game.changeTurn();
+    } else {
+        board = boards.player2;
+        player1Game.changeTurn();
+    }
+
+    console.log(player1Game.turn);
+    console.log(player2Game.turn);
+
     board.addEventListener('click', (e) => {
 
         const cellContainer = e.target;
         const cell = e.target.dataset;
 
         let currentPlayer = player1Game;
-        let oponent = player2Game;
+        let opponent = player2Game;
 
         if (cell.board === 'player1Board' || cell.board === 'player2Board') {
 
             if (cell.board === 'player1Board') {
                 currentPlayer = player2Game;
-                oponent = player1Game;
+                opponent = player1Game;
             }
 
-            if (oponent.alreadyHits(cell.row, cell.column)) {
+            if (opponent.alreadyHits(cell.row, cell.column)) {
                 alert('Already Hit!');
                 return
             }
 
-            currentPlayer.attack(oponent, cell.row, cell.column)
+            currentPlayer.attack(opponent, cell.row, cell.column)
 
             const marker = document.createElement('div');
 
-            if (oponent.MissShot(cell.row, cell.column)) {
+            if (opponent.MissShot(cell.row, cell.column)) {
                 marker.classList.add('marker_miss');
+            } else {
+                marker.classList.add('marker_hit');
             }
 
-            marker.classList.add('marker_hit');
-            
             cellContainer.appendChild(marker);
+
+            currentPlayer.changeTurn();
+            opponent.changeTurn();
         }
     })
-})
+    console.log(player1Game.turn);
+    console.log(player2Game.turn);
+}
+
+const player1Game = new Player('player1');
+const player2Game = new Player('player2');
 
 
 
-const player1Game = new Player("player1");
-const player2Game = new Player("player2");
+player2Game.placeShips(3, 'f', 3, 'Horizontal')
+player1Game.placeShips(3, 'a', 3, 'Horizontal')
 
+player2Game.placeShips(1, 'a', 3, 'Vertical')
+player1Game.placeShips(1, 'j', 3, 'Vertical')
 
-player2Game.placeShips(3, "f", 3, "Horizontal")
-player1Game.placeShips(3, "a", 3, "Horizontal")
-
-player2Game.placeShips(1, "a", 3, "Vertical")
-player1Game.placeShips(1, "j", 3, "Vertical")
+const play = playGame();
