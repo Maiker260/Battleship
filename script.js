@@ -1,6 +1,7 @@
 
 const player1Board = [];
 const player2Board = [];
+let activeGame = true;
 
 function createPlayerBoard(playerBoard) {
     const grid = 10; // Grid Size: 10x10
@@ -19,10 +20,11 @@ function createPlayerBoard(playerBoard) {
 
             const columnElem = document.createElement('div');
             columnElem.dataset.board = playerBoard;
+
                 // In this case the rows will be named 'j' and columns 'i'. ONLY THE NAME
             columnElem.dataset.row = j + 1;
             columnElem.dataset.column = String.fromCharCode(97 + i);
-            
+
             columnElem.classList.add('game_cell');
 
             row.push(column);
@@ -64,7 +66,7 @@ class Ship {
 
 // ---------------------
 function assignBoard(owner) {
-    if (owner === 'player1') {
+    if (owner === 'Player 1') {
         return player1Board;
     }
     
@@ -151,11 +153,12 @@ class Gameboard {
     gameOver() {
         if (this.allShipsSunk()) {
             alert('Game Over!')
-            if (this.owner === 'player1') {
-                alert('Player2 Wins!!');
+            if (this.owner === 'Player 1') {
+                alert('Player 2 Wins!!');
             } else {
-                alert('Player1 Wins!!');
+                alert('Player 1 Wins!!');
             }
+            activeGame = false;
         }
     }
 }
@@ -198,33 +201,30 @@ const boards = {
 }
 
 function playGame() {
-    let board;
 
-    if (player2Game.turn) {
-        board = boards.player1;
-        player2Game.changeTurn();
-    } else {
-        board = boards.player2;
-        player1Game.changeTurn();
-    }
+    // Player1 starts the game
+    player1Game.turn = true;
 
-    console.log(player1Game.turn);
-    console.log(player2Game.turn);
+    function handleClick(e) {
 
-    board.addEventListener('click', (e) => {
+        let board, currentPlayer, opponent;
+
+        if (player2Game.turn) {
+            board = boards.player1;
+            currentPlayer = player2Game;
+            opponent = player1Game;
+        } else {
+            board = boards.player2;
+            currentPlayer = player1Game;
+            opponent = player2Game;
+        }
 
         const cellContainer = e.target;
         const cell = e.target.dataset;
 
-        let currentPlayer = player1Game;
-        let opponent = player2Game;
-
-        if (cell.board === 'player1Board' || cell.board === 'player2Board') {
-
-            if (cell.board === 'player1Board') {
-                currentPlayer = player2Game;
-                opponent = player1Game;
-            }
+        if (!activeGame) {
+            alert ('Game Over, Start a New Game.');
+        } else if (cell.board === board.id) {
 
             if (opponent.alreadyHits(cell.row, cell.column)) {
                 alert('Already Hit!');
@@ -245,14 +245,21 @@ function playGame() {
 
             currentPlayer.changeTurn();
             opponent.changeTurn();
+
+            const currentlyPlaying = document.querySelector('#current_player');
+            currentlyPlaying.textContent = 'Current Player: ' + opponent.owner;
+
+        } else {
+            alert(`${currentPlayer.owner}'s Turn!`);
         }
-    })
-    console.log(player1Game.turn);
-    console.log(player2Game.turn);
+    }
+    boards.player1.addEventListener('click', handleClick);
+    boards.player2.addEventListener('click', handleClick);
 }
 
-const player1Game = new Player('player1');
-const player2Game = new Player('player2');
+
+const player1Game = new Player('Player 1');
+const player2Game = new Player('Player 2');
 
 
 
@@ -262,4 +269,4 @@ player1Game.placeShips(3, 'a', 3, 'Horizontal')
 player2Game.placeShips(1, 'a', 3, 'Vertical')
 player1Game.placeShips(1, 'j', 3, 'Vertical')
 
-const play = playGame();
+const startGame = playGame();
