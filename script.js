@@ -184,7 +184,7 @@ class Player {
     }
 
     attack(opponent, row, column) {
-        opponent.gameboard.receiveAttack(row, column);
+            opponent.gameboard.receiveAttack(row, column);
     }
 
     changeTurn() {
@@ -201,65 +201,103 @@ const boards = {
 }
 
 function playGame() {
-
     // Player1 starts the game
     player1Game.turn = true;
 
-    function handleClick(e) {
-
-        let board, currentPlayer, opponent;
-
-        if (player2Game.turn) {
-            board = boards.player1;
-            currentPlayer = player2Game;
-            opponent = player1Game;
-        } else {
-            board = boards.player2;
-            currentPlayer = player1Game;
-            opponent = player2Game;
-        }
-
-        const cellContainer = e.target;
-        const cell = e.target.dataset;
-
-        if (!activeGame) {
-            alert ('Game Over, Start a New Game.');
-        } else if (cell.board === board.id) {
-
-            if (opponent.alreadyHits(cell.row, cell.column)) {
-                alert('Already Hit!');
-                return
-            }
-
-            currentPlayer.attack(opponent, cell.row, cell.column)
-
-            const marker = document.createElement('div');
-
-            if (opponent.MissShot(cell.row, cell.column)) {
-                marker.classList.add('marker_miss');
-            } else {
-                marker.classList.add('marker_hit');
-            }
-
-            cellContainer.appendChild(marker);
-
-            currentPlayer.changeTurn();
-            opponent.changeTurn();
-
-            const currentlyPlaying = document.querySelector('#current_player');
-            currentlyPlaying.textContent = 'Current Player: ' + opponent.owner;
-
-        } else {
-            alert(`${currentPlayer.owner}'s Turn!`);
-        }
-    }
     boards.player1.addEventListener('click', handleClick);
     boards.player2.addEventListener('click', handleClick);
 }
 
+function handleClick(e) {
+    const cellContainer = e.target;
+    const cell = e.target.dataset;
+    const { board, currentPlayer, opponent } = setPlayerTurn();
+
+    if (!activeGame) {
+        alert('Game Over, Start a New Game.');
+    } else if (cell.board === board.id) {
+
+        if (opponent.alreadyHits(cell.row, cell.column)) {
+            alert('Already Hit!');
+            return;
+        }
+
+        processAttack(currentPlayer, opponent, cell.row, cell.column, cellContainer);
+        
+        if (opponent.owner === 'Computer' && activeGame) {
+            computerTurn(currentPlayer, opponent);
+        } else {
+            changeCurrentPlayerTurn(currentPlayer, opponent);
+        }
+        
+    } else {
+        alert(`${currentPlayer.owner}'s Turn!`);
+    }
+}
+
+function setPlayerTurn() {
+    let board, currentPlayer, opponent;
+
+    if (player2Game.turn) {
+        board = boards.player1;
+        currentPlayer = player2Game;
+        opponent = player1Game;
+    } else {
+        board = boards.player2;
+        currentPlayer = player1Game;
+        opponent = player2Game;
+    }
+
+    return { board, currentPlayer, opponent };
+}
+
+function processAttack(currentPlayer, opponent, row, column, cellContainer) {
+    currentPlayer.attack(opponent, row, column);
+    
+    const marker = createMarker(opponent, row, column);
+    cellContainer.appendChild(marker);
+}
+
+function createMarker(opponent, row, column) {
+    const marker = document.createElement('div');
+
+    if (opponent.MissShot(row, column)) {
+        marker.classList.add('marker_miss');
+    } else {
+        marker.classList.add('marker_hit');
+    }
+
+    return marker;
+}
+
+function changeCurrentPlayerTurn(currentPlayer, opponent) {
+    currentPlayer.changeTurn();
+    opponent.changeTurn();
+
+    const currentlyPlaying = document.querySelector('#current_player');
+    currentlyPlaying.textContent = 'Current Player: ' + opponent.owner;
+}
+
+function computerTurn(user, computer) {
+    let randomRow, randomColumn, alreadyHitBefore;
+
+    do {
+        randomRow = Math.floor(Math.random() * 10) + 1;
+        randomColumn = String.fromCharCode(97 + Math.floor(Math.random() * 10));
+        alreadyHitBefore = user.alreadyHits(randomRow, randomColumn)
+    } while (alreadyHitBefore);
+
+    computer.attack(user, randomRow, randomColumn);
+
+    const marker = createMarker(user, randomRow, randomColumn);
+    const cell = document.querySelector(`[data-board='player1Board'][data-row='${randomRow}'][data-column='${randomColumn}']`);
+    cell.appendChild(marker);
+}
+
 
 const player1Game = new Player('Player 1');
-const player2Game = new Player('Player 2');
+// const player2Game = new Player('Player 2');
+const player2Game = new Player('Computer');
 
 
 
