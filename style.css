@@ -139,6 +139,10 @@ dialog::backdrop {
     background-color: #FFFFFF7d;
 }
 
+.temporaryMark {
+    background-color: red;
+}
+
 .marker_hit {
     z-index: -1;
     width: 50%;
