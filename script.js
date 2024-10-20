@@ -31,7 +31,7 @@ function createPlayerBoard(playerBoard) {
             rowElem.appendChild(columnElem);
         }
 
-        if (playerBoard === 'player1Board') {
+        if (playerBoard === 'player1Board' || playerBoard === 'dialog_placement_board') {
             player1Board.push(row);
             gameboard.appendChild(rowElem);
         } else {
@@ -204,11 +204,11 @@ function playGame() {
     // Player1 starts the game
     player1Game.turn = true;
 
-    boards.player1.addEventListener('click', handleClick);
-    boards.player2.addEventListener('click', handleClick);
+    boards.player1.addEventListener('click', hitCell);
+    boards.player2.addEventListener('click', hitCell);
 }
 
-function handleClick(e) {
+function hitCell(e) {
     const cellContainer = e.target;
     const cell = e.target.dataset;
     const { board, currentPlayer, opponent } = setPlayerTurn();
@@ -300,11 +300,110 @@ const player1Game = new Player('Player 1');
 const player2Game = new Player('Computer');
 
 
+//-------------------
+const dialog = document.querySelector("dialog")
+const press = document.querySelector("#press")
 
-player2Game.placeShips(3, 'f', 3, 'Horizontal')
-player1Game.placeShips(3, 'a', 3, 'Horizontal')
+// Start Game
+press.addEventListener('click', startNewGame);
 
-player2Game.placeShips(1, 'a', 3, 'Vertical')
-player1Game.placeShips(1, 'j', 3, 'Vertical')
+function startNewGame() {
+    dialog.showModal();
+    createPlayerBoard('dialog_placement_board');
+    
+    let currentAxis = 'Horizontal';
 
-const startGame = playGame();
+    const axis = document.querySelector('#axis')
+    axis.addEventListener('click', () => {
+        currentAxis = currentAxis === 'Horizontal' ? 'Vertical' : 'Horizontal';
+        axis.textContent = currentAxis;
+    })
+
+    const newShipContainer = document.querySelector('#dialog_placement_board')
+    
+    newShipContainer.addEventListener('mouseover', (e) => {
+        handleMouseOver(e, currentAxis);
+    })
+
+    newShipContainer.addEventListener('mouseout', (e) => {
+        handleMouseOut(e, currentAxis)
+    })
+
+    newShipContainer.addEventListener('click', (e) => {
+        placeNewShip(e, currentAxis);
+    });
+
+    playerReady();
+}
+
+function handleMouseOver(e, currentAxis) {
+    const target = e.target.dataset;
+
+    if (!target.board) {
+        return
+    }
+
+    for (let i = 0; i < 4; i++) {
+        let cell = selectMultipleCells(i, target, currentAxis);
+
+        if (cell) {
+            cell.classList.add('game_cell_ships_highlight');
+        }
+    }
+}
+
+function handleMouseOut(e, currentAxis) {
+    const target = e.target.dataset;
+
+    if (!target.board) {
+        return
+    }
+
+    for (let i = 0; i < 4; i++) {
+        let cell = selectMultipleCells(i, target, currentAxis);
+
+        if (cell) {
+            cell.classList.remove('game_cell_ships_highlight');
+        }
+    }
+}
+
+function placeNewShip(e, currentAxis) {
+    const target = e.target.dataset;
+
+    if (target.board) {
+        player2Game.placeShips(target.row, target.column, 4, currentAxis)
+
+        for (let i = 0; i < 4; i++) {
+            let cell = selectMultipleCells(i, target, currentAxis);
+
+            if (cell) {
+                cell.classList.add('temporaryMark');
+            }
+        }
+    }
+}
+
+function selectMultipleCells(i, target, currentAxis) {
+    if (currentAxis === 'Horizontal') {
+        // Get Letter Code Number and sum the loop
+        let column = String.fromCharCode(target.column.charCodeAt(0) + i);
+
+        cell = document.querySelector(`[data-board='dialog_placement_board'][data-row='${target.row}'][data-column='${column}']`);
+    } else {
+        cell = document.querySelector(`[data-board='dialog_placement_board'][data-row='${Number(target.row) + i}'][data-column='${target.column}']`);
+    }
+
+    return cell
+}
+
+function playerReady() {
+    document.querySelector('#done_btn').addEventListener('click', () => {
+        dialog.close();
+        playGame();
+
+        // Delete grid when finish placing the ships
+        const placer = document.querySelector('#dialog_placement_board')
+        placer.textContent = '';
+    });
+}

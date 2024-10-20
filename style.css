@@ -6,8 +6,24 @@
 
 body {
     background: rgba(0, 0, 0, .486) url(./Images/worldMap86acb71de180e9befa87.svg) bottom / cover no-repeat;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
+}
+
+dialog {
+    background: green;
+    border: none;
+    border-radius: 1rem;
+    top: 0%;
+    left: 0%;
+}
+
+dialog::backdrop {
+    background-color: hsl(250, 100%, 50%, 0.25);
+}
+
+.dialog_title {
+    text-align: center;
 }
 
 .flex {
@@ -21,7 +37,7 @@ body {
 .main_container {
     flex-direction: column;
     align-items: center;
-    height: 90vh;
+    max-height: 90vh;
 
     /* border: 1px solid white; */
 }
@@ -31,7 +47,7 @@ body {
     font-optical-sizing: auto;
     font-weight: 700;
     font-style: normal;
-    font-size: 9rem;
+    font-size: 7rem;
     text-align: center;
     margin: 0;
     color: white;
@@ -46,7 +62,7 @@ body {
 .current_player {
     text-align: center;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     text-decoration: underline;
 }
 
@@ -72,6 +88,8 @@ body {
     flex-direction: row;
     justify-content: center;
     text-align: center;
+    max-width: 25em;
+    max-height: 25em;
 }
 
 .row {
@@ -84,6 +102,8 @@ body {
     flex-direction: column;
     justify-content: center;
     text-align: center;
+    max-width: 25em;
+    max-height: 25em;
 }
 
 .column {
@@ -97,12 +117,12 @@ body {
     grid-template-columns: repeat(10, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-
+    max-width: 25em;
+    max-height: 25em;
     border: 1px solid white;
 }
 
 .game_cell {
-    width: 3em;
     aspect-ratio: 1;
     border: 1px solid #FFFFFF7d;
     background-color: rgba(0, 0, 0, .486);
@@ -112,6 +132,10 @@ body {
 }
 
 .game_cell:hover {
+    background-color: #FFFFFF7d;
+}
+
+.game_cell_ships_highlight {
     background-color: #FFFFFF7d;
 }
 
