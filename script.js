@@ -2,6 +2,7 @@
 const player1Board = [];
 const player2Board = [];
 let activeGame = true;
+let gameStarted = false;
 
 function createPlayerBoard(playerBoard) {
     const grid = 10; // Grid Size: 10x10
@@ -103,16 +104,16 @@ class Gameboard {
         if (rotation === 'Horizontal') {
             for (let i = 0; i < length; i++) {
                 if (this.board[row - 1][columnIndex + i].value) {
-                    console.log('Horizontal Space already occupied');
+                    alert('Horizontal Space already occupied');
                     return false;
                 } else {
-                    this.board[row -1][columnIndex + i].value = ship; 
+                    this.board[row - 1][columnIndex + i].value = ship; 
                 }
             }
         } else {
             for (let i = 0; i < length; i++) {
                 if (this.board[(row - 1) + i][columnIndex].value) {
-                    console.log('Vertical Space already occupied');
+                    alert('Vertical Space already occupied');
                     return false;
                 } else {
                     this.board[(row - 1) + i][columnIndex].value = ship;
@@ -168,11 +169,12 @@ class Player {
     constructor(owner) {
         this.owner = owner;
         this.turn = false;
+        this.totalShips = 5;
         this.gameboard = new Gameboard(owner);
     }
 
     placeShips(row, column, length, rotation) {
-        this.gameboard.placeShip(row, column, length, rotation);
+        return this.gameboard.placeShip(row, column, length, rotation);
     }
 
     alreadyHits(row, column) {
@@ -302,10 +304,11 @@ const player2Game = new Player('Computer');
 
 //-------------------
 const dialog = document.querySelector("dialog")
-const press = document.querySelector("#press")
+const startGameBtn = document.querySelector("#start_game_btn")
 
 // Start Game
-press.addEventListener('click', startNewGame);
+startGameBtn.addEventListener('click', startNewGame);
+
 
 function startNewGame() {
     dialog.showModal();
@@ -315,7 +318,9 @@ function startNewGame() {
 
     const axis = document.querySelector('#axis')
     axis.addEventListener('click', () => {
-        currentAxis = currentAxis === 'Horizontal' ? 'Vertical' : 'Horizontal';
+        currentAxis = currentAxis === 'Horizontal' 
+            ? 'Vertical' 
+            : 'Horizontal';
         axis.textContent = currentAxis;
     })
 
@@ -371,15 +376,25 @@ function handleMouseOut(e, currentAxis) {
 function placeNewShip(e, currentAxis) {
     const target = e.target.dataset;
 
-    if (target.board) {
-        player2Game.placeShips(target.row, target.column, 4, currentAxis)
+    if (target.board && player2Game.totalShips > 0) {
+        if (!player2Game.placeShips(target.row, target.column, 4, currentAxis)) {
+            return
+        }
 
         for (let i = 0; i < 4; i++) {
             let cell = selectMultipleCells(i, target, currentAxis);
 
             if (cell) {
-                cell.classList.add('temporaryMark');
+                cell.classList.add('ship_placed');
             }
+        }
+        player2Game.totalShips -= 1;
+
+        const shipsRemaining = document.querySelector('#ships_remaining');
+        shipsRemaining.textContent = `${player2Game.totalShips} Ships Remaining`;
+
+        if (player2Game.totalShips === 0) {
+            document.querySelector('#done_btn').removeAttribute('disabled', '');
         }
     }
 }
@@ -399,11 +414,17 @@ function selectMultipleCells(i, target, currentAxis) {
 
 function playerReady() {
     document.querySelector('#done_btn').addEventListener('click', () => {
-        dialog.close();
+    dialog.close();
         playGame();
-
+    
         // Delete grid when finish placing the ships
         const placer = document.querySelector('#dialog_placement_board')
         placer.textContent = '';
     });
+
+    startGameBtn.setAttribute('disabled', '');
+}
+
+function computerPlaceRandomShips() {
+    
 }

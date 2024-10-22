@@ -1,29 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Text:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+/* Global */
 
 * {
     box-sizing: border-box;
-}
-
-body {
-    background: rgba(0, 0, 0, .486) url(./Images/worldMap86acb71de180e9befa87.svg) bottom / cover no-repeat;
-    min-height: 100vh;
-    overflow: hidden;
-}
-
-dialog {
-    background: green;
-    border: none;
-    border-radius: 1rem;
-    top: 0%;
-    left: 0%;
-}
-
-dialog::backdrop {
-    background-color: hsl(250, 100%, 50%, 0.25);
-}
-
-.dialog_title {
-    text-align: center;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
 }
 
 .flex {
@@ -34,12 +18,88 @@ dialog::backdrop {
     display: grid;
 }
 
+.btn {
+    border-radius: 1em;
+    padding: 1em;
+    background-color: white;
+    color: black;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: rgba(255, 0, 0, 0);
+    color: white;
+    text-decoration: underline;
+}
+
+.btn:disabled, .btn:disabled:hover{
+    background-color: gray;
+    border-color:  gray;
+    color: black;
+    cursor: auto;
+    text-decoration: none;
+}
+
+body {
+    background: rgba(0, 0, 0, .486) url(./Images/worldMap86acb71de180e9befa87.svg) bottom / cover no-repeat;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Dialog */
+
+dialog {
+    background: rgb(68 90 129);
+    border: none;
+    border-radius: 1rem;
+    top: 0%;
+    left: 0%;
+    padding: 2em;
+}
+
+dialog::backdrop {
+    background-color: hsla(260, 6%, 9%, 0.25);
+}
+
+.dialog_title {
+    text-align: center;
+    color: white;
+    font-family: "Big Shoulders Stencil Text", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 3rem;
+    margin: 0;
+}
+
+.ships_remaining {
+    text-align: center;
+    color: white;
+}
+
+.axis_btn_container {
+    justify-content: left;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    gap: 0.5em;
+}
+
+.axis_title {
+    margin-left: 2em;
+    color: white;
+}
+
+.done_btn_container {
+    margin-top: 1.5em;
+    text-align: center;
+}
+
+/* Content */
 .main_container {
     flex-direction: column;
     align-items: center;
     max-height: 90vh;
-
-    /* border: 1px solid white; */
 }
 
 .main_title {
@@ -51,8 +111,6 @@ dialog::backdrop {
     text-align: center;
     margin: 0;
     color: white;
-
-    /* border: 1px solid white; */
 }
 
 .title_container {
@@ -64,13 +122,25 @@ dialog::backdrop {
     color: white;
     font-size: 1.3rem;
     text-decoration: underline;
+    margin-bottom: 0.5em;
+}
+
+.playground {
+    position: relative;
+    left: -5em;
+    gap: 4em;
+}
+
+.play_buttons {
+    flex-direction: column;
+    justify-content: center;
+    gap: 1em;
 }
 
 .game_container {
     gap: 4em;
     max-width: 100%;
     justify-content: center;
-    padding-top: 1em;
 }
 
 .board {
@@ -81,6 +151,11 @@ dialog::backdrop {
     grid-row-gap: 0px;
     color: white;
     gap: 0.5em;
+}
+
+.player_name {
+    text-align: center;
+    color: white;
 }
 
 .rows_header {
@@ -139,12 +214,12 @@ dialog::backdrop {
     background-color: #FFFFFF7d;
 }
 
-.temporaryMark {
+.ship_placed {
     background-color: red;
 }
 
 .marker_hit {
-    z-index: -1;
+    z-index: 5;
     width: 50%;
     height: 50%;
     background-color: red;
@@ -152,7 +227,7 @@ dialog::backdrop {
 }
 
 .marker_miss {
-    z-index: -1;
+    z-index: 5;
     width: 50%;
     height: 50%;
     background-color: rgb(26, 212, 26);

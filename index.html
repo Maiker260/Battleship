@@ -9,8 +9,12 @@
 </head>
 <body>
     <dialog>
-        <h2 class="dialog_title">Place Your Carrier:</h2>
-        <button id="axis">Horizontal</button>
+        <h2 class="dialog_title">Place Your Ships:</h2>
+        <h3 id="ships_remaining" class="ships_remaining">5 Ships Remaining</h3>
+        <div class="axis_btn_container flex">
+            <p class="axis_title">Axis:</p>
+            <button id="axis" class="btn">Horizontal</button>
+        </div>
         <div class="dialog_grid board grid">
             <div class="rows_header flex">
                 <div class="row">A</div>
@@ -39,72 +43,84 @@
             <section id="dialog_placement_board" class="dialog_placement_board board_container grid">
             </section>
         </div>
-        <button id="done_btn">Done</button>
+        <div class="done_btn_container">
+            <button id="done_btn" class="btn" disabled>Done</button>
+        </div>
     </dialog>
-    <button id="press">PRESSSSSSS
-    </button>
     <main class="main_container flex">
         <header class="title_container">
             <h1 id="main_title" class="main_title">BATTLESHIP</h1>
             <h3 id="current_player" class="current_player">Current Player: Player 1</h3>
         </header>
-        <section class="game_container flex">
-            <div class="left_board board grid">
-                <div class="rows_header flex">
-                    <div class="row">A</div>
-                    <div class="row">B</div>
-                    <div class="row">C</div>
-                    <div class="row">D</div>
-                    <div class="row">E</div>
-                    <div class="row">F</div>
-                    <div class="row">G</div>
-                    <div class="row">H</div>
-                    <div class="row">I</div>
-                    <div class="row">J</div>
-                </div>
-                <div class="colums_header flex">
-                    <div class="column">1</div>
-                    <div class="column">2</div>
-                    <div class="column">3</div>
-                    <div class="column">4</div>
-                    <div class="column">5</div>
-                    <div class="column">6</div>
-                    <div class="column">7</div>
-                    <div class="column">8</div>
-                    <div class="column">9</div>
-                    <div class="column">10</div>
-                </div>
-                <section id="player1Board" class="player1_board board_container grid">
-                </section>
+        <section class="playground flex">
+            <div class="flex play_buttons">
+                <button id="start_game_btn" class="btn">Start Game</button>
+                <button class="btn">Reset Game</button>
             </div>
-            <div class="right_side board grid">
-                <div class="rows_header flex">
-                    <div class="row">A</div>
-                    <div class="row">B</div>
-                    <div class="row">C</div>
-                    <div class="row">D</div>
-                    <div class="row">E</div>
-                    <div class="row">F</div>
-                    <div class="row">G</div>
-                    <div class="row">H</div>
-                    <div class="row">I</div>
-                    <div class="row">J</div>
+            <section class="game_container flex">
+                <div class="left_board">
+                    <h2 class="player_name">Player 1</h2>
+                    <div class="left_board board grid">
+                        <div class="rows_header flex">
+                            <div class="row">A</div>
+                            <div class="row">B</div>
+                            <div class="row">C</div>
+                            <div class="row">D</div>
+                            <div class="row">E</div>
+                            <div class="row">F</div>
+                            <div class="row">G</div>
+                            <div class="row">H</div>
+                            <div class="row">I</div>
+                            <div class="row">J</div>
+                        </div>
+                        <div class="colums_header flex">
+                            <div class="column">1</div>
+                            <div class="column">2</div>
+                            <div class="column">3</div>
+                            <div class="column">4</div>
+                            <div class="column">5</div>
+                            <div class="column">6</div>
+                            <div class="column">7</div>
+                            <div class="column">8</div>
+                            <div class="column">9</div>
+                            <div class="column">10</div>
+                        </div>
+                        <section id="player1Board" class="player1_board board_container grid">
+                        </section>
+                    </div>
                 </div>
-                <div class="colums_header flex">
-                    <div class="column">1</div>
-                    <div class="column">2</div>
-                    <div class="column">3</div>
-                    <div class="column">4</div>
-                    <div class="column">5</div>
-                    <div class="column">6</div>
-                    <div class="column">7</div>
-                    <div class="column">8</div>
-                    <div class="column">9</div>
-                    <div class="column">10</div>
+                <div class="right_side">
+                    <h2 class="player_name">Computer</h2>
+                    <div class="board grid">
+                        <div class="rows_header flex">
+                            <div class="row">A</div>
+                            <div class="row">B</div>
+                            <div class="row">C</div>
+                            <div class="row">D</div>
+                            <div class="row">E</div>
+                            <div class="row">F</div>
+                            <div class="row">G</div>
+                            <div class="row">H</div>
+                            <div class="row">I</div>
+                            <div class="row">J</div>
+                        </div>
+                        <div class="colums_header flex">
+                            <div class="column">1</div>
+                            <div class="column">2</div>
+                            <div class="column">3</div>
+                            <div class="column">4</div>
+                            <div class="column">5</div>
+                            <div class="column">6</div>
+                            <div class="column">7</div>
+                            <div class="column">8</div>
+                            <div class="column">9</div>
+                            <div class="column">10</div>
+                        </div>
+                        <section id="player2Board" class="player2_board board_container grid">
+                        </section>
+                    </div>
                 </div>
-                <section id="player2Board" class="player2_board board_container grid">
-                </section>
-            </div>
+            </section>
         </section>
     </main>
     <footer class="footer">Website Under Construction</footer>
