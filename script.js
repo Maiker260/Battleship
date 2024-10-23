@@ -96,24 +96,42 @@ class Gameboard {
         }
     }
     
-    placeShip(row, column, length, rotation) {
+    placeShip(row, column, length, rotation, computer) {
         const columnIndex = column.charCodeAt(0) - 97;
-        const ship = new Ship(length);     
-
+        const ship = new Ship(length);
+        
         // Place the Ship depending on the rotation
+        if ((row - 1) > 9 ||
+            (row - 1) < 0 ||
+            columnIndex > 9 ||
+            columnIndex < 0) 
+        {return false}
+            
         if (rotation === 'Horizontal') {
+            if ((columnIndex) > 6) {return false}
+
             for (let i = 0; i < length; i++) {
-                if (this.board[row - 1][columnIndex + i].value) {
-                    alert('Horizontal Space already occupied');
+                if ((columnIndex + i) > 9 || (columnIndex + i) < 0) {return false}
+            
+                if (this.board[(row - 1)][(columnIndex + i)].value) {
+                    if (!computer) {
+                        alert('Horizontal Space already occupied');
+                    }
                     return false;
+
                 } else {
-                    this.board[row - 1][columnIndex + i].value = ship; 
+                    this.board[(row - 1)][(columnIndex + i)].value = ship;
                 }
             }
         } else {
+            if ((row - 1) > 6 ) {return false}
             for (let i = 0; i < length; i++) {
+                if ((row - 1 + i) > 9 || (row - 1 + i) < 0) {return false}
+
                 if (this.board[(row - 1) + i][columnIndex].value) {
-                    alert('Vertical Space already occupied');
+                    if (!computer) {
+                        alert('Vertical Space already occupied');
+                    }
                     return false;
                 } else {
                     this.board[(row - 1) + i][columnIndex].value = ship;
@@ -170,11 +188,12 @@ class Player {
         this.owner = owner;
         this.turn = false;
         this.totalShips = 5;
+        this.shipLength = 4;
         this.gameboard = new Gameboard(owner);
     }
 
-    placeShips(row, column, length, rotation) {
-        return this.gameboard.placeShip(row, column, length, rotation);
+    placeShips(row, column, length, rotation, computer) {
+        return this.gameboard.placeShip(row, column, length, rotation, computer);
     }
 
     alreadyHits(row, column) {
@@ -311,6 +330,7 @@ startGameBtn.addEventListener('click', startNewGame);
 
 
 function startNewGame() {
+    computerPlaceRandomShips(); // Computer's Board Generated
     dialog.showModal();
     createPlayerBoard('dialog_placement_board');
     
@@ -376,24 +396,25 @@ function handleMouseOut(e, currentAxis) {
 function placeNewShip(e, currentAxis) {
     const target = e.target.dataset;
 
-    if (target.board && player2Game.totalShips > 0) {
-        if (!player2Game.placeShips(target.row, target.column, 4, currentAxis)) {
+    if (target.board && player1Game.totalShips > 0) {
+        if (!player1Game.placeShips(target.row, target.column, player1Game.shipLength, currentAxis)) {
             return
         }
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < player1Game.shipLength; i++) {
             let cell = selectMultipleCells(i, target, currentAxis);
 
             if (cell) {
                 cell.classList.add('ship_placed');
             }
         }
-        player2Game.totalShips -= 1;
+
+        player1Game.totalShips -= 1;
 
         const shipsRemaining = document.querySelector('#ships_remaining');
-        shipsRemaining.textContent = `${player2Game.totalShips} Ships Remaining`;
+        shipsRemaining.textContent = `${player1Game.totalShips} Ships Remaining`;
 
-        if (player2Game.totalShips === 0) {
+        if (player1Game.totalShips === 0) {
             document.querySelector('#done_btn').removeAttribute('disabled', '');
         }
     }
@@ -426,5 +447,28 @@ function playerReady() {
 }
 
 function computerPlaceRandomShips() {
-    
+    const gridSize = 10; // Grid Size: 10x10
+    const computerPlayer = true;
+
+    while (player2Game.gameboard.ships.length < 5) {
+        const axis = Math.random() < 0.5 ? 'Horizontal' : 'Vertical';
+        let randomNum = Math.floor(Math.random() * gridSize);
+        let shipPlaced = false;
+
+        if (axis === 'Horizontal') {
+            while (!shipPlaced) {
+                if (!player2Game.placeShips(randomNum, String.fromCharCode(97 + randomNum), player2Game.shipLength, axis, computerPlayer)) {
+                    break
+                }
+                shipPlaced = true;
+            }
+        } else {
+            while (!shipPlaced) {
+                if (!player2Game.placeShips(randomNum, String.fromCharCode(97 + randomNum), player2Game.shipLength, axis, computerPlayer)) {
+                    break
+                }
+                shipPlaced = true;
+            }
+        }
+    }
 }
