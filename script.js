@@ -14,6 +14,7 @@ function createBoard(playerBoard) {
         for (let j = 0; j < grid; j++) {
             const column = {
                 row: i + 1,
+                // Assign a Letter to the Columns.
                 column: String.fromCharCode(97 + j),
                 value: null,
             };
@@ -98,6 +99,7 @@ class Gameboard {
         const columnIndex = column.charCodeAt(0) - 97;
         const ship = new Ship(length);
         
+        // Reset in case that a higher number was received.
         if ((row - 1) > 9 ||
             (row - 1) < 0 ||
             columnIndex > 9 ||
@@ -110,14 +112,14 @@ class Gameboard {
             if ((columnIndex) > 6) {return false}
 
             for (let i = 0; i < length; i++) {
+                // Do not allow to put a ship outside the grid
                 if ((columnIndex + i) > 9 || (columnIndex + i) < 0) {return false}
             
-                // console.log(this.board[(row - 1)][(columnIndex + i)]);
+                // Reject in the new Ship overlaps an old one.
                 if (this.board[(row - 1)][(columnIndex + i)].value) {
-                    // if (!computer) {
-                    //     alert('Horizontal Space already occupied');
-                    // }
-                    // console.log(this.board);
+                    if (!computer) {
+                        alert('Horizontal Space already occupied');
+                    }
                     return false;
 
                 } else {
@@ -129,8 +131,10 @@ class Gameboard {
             if ((row - 1) > 6 ) {return false}
 
             for (let i = 0; i < length; i++) {
+                // Do not allow to put a ship outside the grid
                 if ((row - 1 + i) > 9 || (row - 1 + i) < 0) {return false}
 
+                // Reject in the new Ship overlaps an old one.
                 if (this.board[(row - 1) + i][columnIndex].value) {
                     if (!computer) {
                         alert('Vertical Space already occupied');
@@ -156,11 +160,20 @@ class Gameboard {
             this.shots.push({ row, column });
 
             if (ship.isSunk()) {
-                console.log('Ship Sunk!');
+                let player;
+                let currentShips = this.ships.filter((ship) => ship.damage == 4).length;
+
+                this.owner === 'Computer' 
+                    ? player = 'player2'
+                    : player = this.owner
+
+                const shipsRemaining = document.querySelector(`#${player.replace(/\s+/g, '').toLowerCase()}_ships_remaining`);
+                shipsRemaining.textContent = `${this.ships.length - currentShips} Ships Remaining`            
             }
 
             // Check if the game is over.
             this.gameOver();
+
             return true
         } else {
             this.missedAttacks.push({ row, column });
@@ -176,10 +189,11 @@ class Gameboard {
         if (this.allShipsSunk()) {
             alert('Game Over!')
             if (this.owner === 'Player 1') {
-                alert('Player 2 Wins!!');
+                alert('Computer Wins!!');
             } else {
                 alert('Player 1 Wins!!');
             }
+            // Disable Game
             activeGame = false;
         }
     }
@@ -228,30 +242,32 @@ function playGame() {
     // Player1 starts the game
     player1Game.turn = true;
 
-    boards.player1.addEventListener('click', hitCell);
+    // boards.player1.addEventListener('click', hitCell);
     boards.player2.addEventListener('click', hitCell);
 }
 
 function hitCell(e) {
     const cellContainer = e.target;
     const cell = e.target.dataset;
-    const { board, currentPlayer, opponent } = setPlayerTurn();
+    const { board, currentPlayer, opponent } = setPlayer();
 
     if (!activeGame) {
         alert('Game Over, Start a New Game.');
     } else if (cell.board === board.id) {
-
+        
         if (opponent.alreadyHits(cell.row, cell.column)) {
             alert('Already Hit!');
             return;
         }
 
-        processAttack(currentPlayer, opponent, cell.row, cell.column, cellContainer);
+        // Change Player Turn (vs Computer only)
+        changeCurrentPlayerTurn(currentPlayer, opponent, opponent)
+
+        attackHandler(currentPlayer, opponent, cell.row, cell.column, cellContainer);
         
-        if (opponent.owner === 'Computer' && activeGame) {
+        if (opponent.owner === 'Computer' && activeGame && opponent.turn) {
             computerTurn(currentPlayer, opponent);
-        } else {
-            changeCurrentPlayerTurn(currentPlayer, opponent);
+            changeCurrentPlayerTurn(currentPlayer, opponent, currentPlayer)
         }
         
     } else {
@@ -259,7 +275,7 @@ function hitCell(e) {
     }
 }
 
-function setPlayerTurn() {
+function setPlayer() {
     let board, currentPlayer, opponent;
 
     if (player2Game.turn) {
@@ -275,7 +291,7 @@ function setPlayerTurn() {
     return { board, currentPlayer, opponent };
 }
 
-function processAttack(currentPlayer, opponent, row, column, cellContainer) {
+function attackHandler(currentPlayer, opponent, row, column, cellContainer) {
     currentPlayer.attack(opponent, row, column);
     
     const marker = createMarker(opponent, row, column);
@@ -294,12 +310,11 @@ function createMarker(opponent, row, column) {
     return marker;
 }
 
-function changeCurrentPlayerTurn(currentPlayer, opponent) {
+function changeCurrentPlayerTurn(currentPlayer, opponent, player) {
+    document.querySelector('#current_player').textContent = 'Current Player: ' + player.owner;
+
     currentPlayer.changeTurn();
     opponent.changeTurn();
-
-    const currentlyPlaying = document.querySelector('#current_player');
-    currentlyPlaying.textContent = 'Current Player: ' + opponent.owner;
 }
 
 function computerTurn(user, computer) {
@@ -332,26 +347,30 @@ const resetGameBtn = document.querySelector("#reset_game_btn")
 // Start Game
 startGameBtn.addEventListener('click', startNewGame);
 
-let mouseOverHandler, mouseOutHandler, clickHandler;
-function handleDialogEventListeners(currentAxis) {
+// Enable Dialog Event Listeners
+let mouseOverHandler, mouseOutHandler, addShipHandler;
 
+function handleDialogEventListeners(currentAxis) {
     const newShipContainer = document.querySelector('#dialog_placement_board');
+    
+    // Change the Current Axis in the DOM
+    const axis = document.querySelector('#axis')
+    axis.textContent = currentAxis;
 
     // Remove previous event listeners if they exist
     if (mouseOverHandler) newShipContainer.removeEventListener('mouseover', mouseOverHandler);
     if (mouseOutHandler) newShipContainer.removeEventListener('mouseout', mouseOutHandler);
-    if (clickHandler) newShipContainer.removeEventListener('click', clickHandler);
+    if (addShipHandler) newShipContainer.removeEventListener('click', addShipHandler);
 
     // Define new handlers and store their references
     mouseOverHandler = (e) => handleMouseOver(e, currentAxis);
     mouseOutHandler = (e) => handleMouseOut(e, currentAxis);
-    clickHandler = (e) => placeNewShip(e, currentAxis);
+    addShipHandler = (e) => placeNewShip(e, currentAxis);
 
     // Add event listeners
     newShipContainer.addEventListener('mouseover', mouseOverHandler);
     newShipContainer.addEventListener('mouseout', mouseOutHandler);
-    newShipContainer.addEventListener('click', clickHandler);
-    
+    newShipContainer.addEventListener('click', addShipHandler);
 }
 
 function startNewGame() {
@@ -367,19 +386,12 @@ function startNewGame() {
         currentAxis = currentAxis === 'Horizontal' 
             ? 'Vertical' 
             : 'Horizontal';
-        axis.textContent = currentAxis;
+        handleDialogEventListeners(currentAxis)
     })
 
     handleDialogEventListeners(currentAxis)
 
     document.querySelector('#done_btn').addEventListener('click', playerReady);
-}
-
-function rotationHandler() {
-    currentAxis = currentAxis === 'Horizontal' 
-            ? 'Vertical' 
-            : 'Horizontal';
-    axis.textContent = currentAxis;
 }
 
 function handleMouseOver(e, currentAxis) {
@@ -422,6 +434,7 @@ function placeNewShip(e, currentAxis) {
             return
         }
 
+        // Loop through the next cells to place the ship.
         for (let i = 0; i < player1Game.shipLength; i++) {
             let cell = selectMultipleCells(i, target, currentAxis);
 
@@ -441,6 +454,7 @@ function placeNewShip(e, currentAxis) {
     }
 }
 
+// Highlight the multiple cells at the same time.
 function selectMultipleCells(i, target, currentAxis) {
     if (currentAxis === 'Horizontal') {
         // Get Letter Code Number and sum the loop
@@ -478,20 +492,11 @@ function computerPlaceRandomShips() {
         let randomNum = Math.floor(Math.random() * gridSize);
         let shipPlaced = false;
 
-        if (axis === 'Horizontal') {
-            while (!shipPlaced) {
-                if (!player2Game.placeShips(randomNum, String.fromCharCode(97 + randomNum), player2Game.shipLength, axis, computerPlayer)) {
-                    break
-                }
-                shipPlaced = true;
+        while (!shipPlaced) {
+            if (!player2Game.placeShips(randomNum, String.fromCharCode(97 + randomNum), player2Game.shipLength, axis, computerPlayer)) {
+                break
             }
-        } else {
-            while (!shipPlaced) {
-                if (!player2Game.placeShips(randomNum, String.fromCharCode(97 + randomNum), player2Game.shipLength, axis, computerPlayer)) {
-                    break
-                }
-                shipPlaced = true;
-            }
+            shipPlaced = true;
         }
     }
 }
@@ -521,21 +526,11 @@ function resetGame() {
     player1Game = new Player('Player 1');
     player2Game = new Player('Computer');
 
-    // console.log(player1Board);
-
     const currentlyPlaying = document.querySelector('#current_player');
     currentlyPlaying.textContent = 'Current Player: None';
 
     const shipsRemaining = document.querySelector('#ships_remaining');
     shipsRemaining.textContent = `${player1Game.totalShips} Ships Remaining`;
-
-    resetDialog();
-}
-
-function resetDialog() {
-    const gridDialog = document.querySelector('#dialog_placement_board');
-    gridDialog.textContent = ''; // Clear the dialog placement board
-    dialog.close(); // Ensure the dialog is closed during reset
 }
 
 document.querySelector('#reset_game_btn').addEventListener('click', resetGame);

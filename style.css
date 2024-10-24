@@ -218,6 +218,8 @@ dialog::backdrop {
     background-color: red;
 }
 
+
+
 .marker_hit {
     z-index: 5;
     width: 50%;
