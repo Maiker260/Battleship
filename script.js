@@ -346,6 +346,7 @@ const resetGameBtn = document.querySelector("#reset_game_btn")
 
 // Start Game
 startGameBtn.addEventListener('click', startNewGame);
+resetGameBtn.addEventListener('click', resetGame);
 
 // Enable Dialog Event Listeners
 let mouseOverHandler, mouseOutHandler, addShipHandler;
@@ -531,6 +532,7 @@ function resetGame() {
 
     const shipsRemaining = document.querySelector('#ships_remaining');
     shipsRemaining.textContent = `${player1Game.totalShips} Ships Remaining`;
-}
 
-document.querySelector('#reset_game_btn').addEventListener('click', resetGame);
+    document.querySelector('#player1_ships_remaining').textContent = `${player1Game.totalShips} Ships Remaining`;
+    document.querySelector('#player2_ships_remaining').textContent = `${player2Game.totalShips} Ships Remaining`;
+}
