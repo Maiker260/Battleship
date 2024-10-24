@@ -1,10 +1,9 @@
 
-const player1Board = [];
-const player2Board = [];
-let activeGame = true;
-let gameStarted = false;
+let player1Board = [];
+let player2Board = [];
+let activeGame = false;
 
-function createPlayerBoard(playerBoard) {
+function createBoard(playerBoard) {
     const grid = 10; // Grid Size: 10x10
     const gameboard = document.querySelector(`#${playerBoard}`);
 
@@ -32,19 +31,18 @@ function createPlayerBoard(playerBoard) {
             rowElem.appendChild(columnElem);
         }
 
-        if (playerBoard === 'player1Board' || playerBoard === 'dialog_placement_board') {
+        if (playerBoard === 'dialog_placement_board') {
             player1Board.push(row);
-            gameboard.appendChild(rowElem);
-        } else {
+        } else if (playerBoard === 'player2Board') {
             player2Board.push(row);
-            gameboard.appendChild(rowElem);
         }
+        gameboard.appendChild(rowElem);
     }
 }
 
 
-createPlayerBoard('player1Board');
-createPlayerBoard('player2Board');
+createBoard('player1Board');
+createBoard('player2Board');
 
 // Need to split the code into modules
 //////////////////////////////////////////
@@ -100,23 +98,26 @@ class Gameboard {
         const columnIndex = column.charCodeAt(0) - 97;
         const ship = new Ship(length);
         
-        // Place the Ship depending on the rotation
         if ((row - 1) > 9 ||
             (row - 1) < 0 ||
             columnIndex > 9 ||
             columnIndex < 0) 
         {return false}
-            
+        
+        // Place the Ship depending on the rotation
         if (rotation === 'Horizontal') {
+            // Do not allow to put a ship outside the grid
             if ((columnIndex) > 6) {return false}
 
             for (let i = 0; i < length; i++) {
                 if ((columnIndex + i) > 9 || (columnIndex + i) < 0) {return false}
             
+                // console.log(this.board[(row - 1)][(columnIndex + i)]);
                 if (this.board[(row - 1)][(columnIndex + i)].value) {
-                    if (!computer) {
-                        alert('Horizontal Space already occupied');
-                    }
+                    // if (!computer) {
+                    //     alert('Horizontal Space already occupied');
+                    // }
+                    // console.log(this.board);
                     return false;
 
                 } else {
@@ -124,7 +125,9 @@ class Gameboard {
                 }
             }
         } else {
+            // Do not allow to put a ship outside the grid
             if ((row - 1) > 6 ) {return false}
+
             for (let i = 0; i < length; i++) {
                 if ((row - 1 + i) > 9 || (row - 1 + i) < 0) {return false}
 
@@ -316,23 +319,46 @@ function computerTurn(user, computer) {
 }
 
 
-const player1Game = new Player('Player 1');
+let player1Game = new Player('Player 1');
 // const player2Game = new Player('Player 2');
-const player2Game = new Player('Computer');
+let player2Game = new Player('Computer');
 
 
 //-------------------
 const dialog = document.querySelector("dialog")
 const startGameBtn = document.querySelector("#start_game_btn")
+const resetGameBtn = document.querySelector("#reset_game_btn")
 
 // Start Game
 startGameBtn.addEventListener('click', startNewGame);
 
+let mouseOverHandler, mouseOutHandler, clickHandler;
+function handleDialogEventListeners(currentAxis) {
+
+    const newShipContainer = document.querySelector('#dialog_placement_board');
+
+    // Remove previous event listeners if they exist
+    if (mouseOverHandler) newShipContainer.removeEventListener('mouseover', mouseOverHandler);
+    if (mouseOutHandler) newShipContainer.removeEventListener('mouseout', mouseOutHandler);
+    if (clickHandler) newShipContainer.removeEventListener('click', clickHandler);
+
+    // Define new handlers and store their references
+    mouseOverHandler = (e) => handleMouseOver(e, currentAxis);
+    mouseOutHandler = (e) => handleMouseOut(e, currentAxis);
+    clickHandler = (e) => placeNewShip(e, currentAxis);
+
+    // Add event listeners
+    newShipContainer.addEventListener('mouseover', mouseOverHandler);
+    newShipContainer.addEventListener('mouseout', mouseOutHandler);
+    newShipContainer.addEventListener('click', clickHandler);
+    
+}
 
 function startNewGame() {
-    computerPlaceRandomShips(); // Computer's Board Generated
+    activeGame = true;
+
     dialog.showModal();
-    createPlayerBoard('dialog_placement_board');
+    createBoard('dialog_placement_board');
     
     let currentAxis = 'Horizontal';
 
@@ -344,21 +370,16 @@ function startNewGame() {
         axis.textContent = currentAxis;
     })
 
-    const newShipContainer = document.querySelector('#dialog_placement_board')
-    
-    newShipContainer.addEventListener('mouseover', (e) => {
-        handleMouseOver(e, currentAxis);
-    })
+    handleDialogEventListeners(currentAxis)
 
-    newShipContainer.addEventListener('mouseout', (e) => {
-        handleMouseOut(e, currentAxis)
-    })
+    document.querySelector('#done_btn').addEventListener('click', playerReady);
+}
 
-    newShipContainer.addEventListener('click', (e) => {
-        placeNewShip(e, currentAxis);
-    });
-
-    playerReady();
+function rotationHandler() {
+    currentAxis = currentAxis === 'Horizontal' 
+            ? 'Vertical' 
+            : 'Horizontal';
+    axis.textContent = currentAxis;
 }
 
 function handleMouseOver(e, currentAxis) {
@@ -434,16 +455,18 @@ function selectMultipleCells(i, target, currentAxis) {
 }
 
 function playerReady() {
-    document.querySelector('#done_btn').addEventListener('click', () => {
-    dialog.close();
-        playGame();
+    // Computer's Board Generated
+    computerPlaceRandomShips();
     
-        // Delete grid when finish placing the ships
-        const placer = document.querySelector('#dialog_placement_board')
-        placer.textContent = '';
-    });
+    dialog.close();
+    playGame();
+    
+    // Delete grid when finish placing the ships
+    const gridDialog = document.querySelector('#dialog_placement_board')
+    gridDialog.textContent = '';
 
     startGameBtn.setAttribute('disabled', '');
+    resetGameBtn.removeAttribute('disabled', '');
 }
 
 function computerPlaceRandomShips() {
@@ -472,3 +495,47 @@ function computerPlaceRandomShips() {
         }
     }
 }
+
+function resetGame() {
+    player1Board = [];
+    player2Board = [];
+    activeGame = false;
+
+    resetGameBtn.setAttribute('disabled', '');
+    startGameBtn.removeAttribute('disabled', '');
+
+    const player1BoardElement = document.querySelector('#player1Board');
+    const player2BoardElement = document.querySelector('#player2Board');
+    player1BoardElement.textContent = '';
+    player2BoardElement.textContent = '';
+
+    const allMarkers = document.querySelectorAll('.marker_hit, .marker_miss');
+    allMarkers.forEach(marker => marker.remove());
+
+    createBoard('player1Board');
+    createBoard('player2Board');
+
+    const gridDialog = document.querySelector('#dialog_placement_board')
+    gridDialog.textContent = '';
+    
+    player1Game = new Player('Player 1');
+    player2Game = new Player('Computer');
+
+    // console.log(player1Board);
+
+    const currentlyPlaying = document.querySelector('#current_player');
+    currentlyPlaying.textContent = 'Current Player: None';
+
+    const shipsRemaining = document.querySelector('#ships_remaining');
+    shipsRemaining.textContent = `${player1Game.totalShips} Ships Remaining`;
+
+    resetDialog();
+}
+
+function resetDialog() {
+    const gridDialog = document.querySelector('#dialog_placement_board');
+    gridDialog.textContent = ''; // Clear the dialog placement board
+    dialog.close(); // Ensure the dialog is closed during reset
+}
+
+document.querySelector('#reset_game_btn').addEventListener('click', resetGame);
