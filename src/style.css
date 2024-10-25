@@ -42,7 +42,7 @@
 }
 
 body {
-    background: rgba(0, 0, 0, .486) url(./Images/worldMap86acb71de180e9befa87.svg) bottom / cover no-repeat;
+    background: rgba(0, 0, 0, .486) url(../Images/worldMap86acb71de180e9befa87.svg) bottom / cover no-repeat;
     min-height: 100vh;
     overflow: hidden;
 }
