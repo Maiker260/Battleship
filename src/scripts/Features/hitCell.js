@@ -31,8 +31,9 @@ export default function hitCell(e) {
             changeCurrentPlayerTurn(currentPlayer, opponent, currentPlayer)
         }
         
+    } else if (cell.mark) {
+        alert('Already Hit!');
     } else {
-        console.log(cellContainer);
         alert(`${currentPlayer.owner}'s Turn!`);
     }
 }

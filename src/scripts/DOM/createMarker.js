@@ -1,6 +1,7 @@
 // Function to create and assign the Marker Color when clicking a cell
 export default function createMarker(opponent, row, column) {
     const marker = document.createElement('div');
+    marker.dataset.mark = 'marker'
 
     if (opponent.MissShot(row, column)) {
         marker.classList.add('marker_miss');
